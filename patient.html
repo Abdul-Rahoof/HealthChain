@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <meta http-equiv="X-UA-Compatible" content="ie=edge">
+ <title>Document</title>
+<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" type="text/css" href="index.css">
+<script src="./node_modules/web3/dist/web3.min.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+<script src="parse.min.js"></script>
+<script>
+jQuery(document).ready(function() {
+
+    Parse.$ = jQuery;
+    Parse.initialize("...", "...");
+
+    $('.form-logout').on('submit', function (e) {
+        // Prevent Default Submit Event
+        e.preventDefault();
+
+        console.log("Performing submit");
+
+        //logout current user
+        if ( Parse.User.current() ) {
+            Parse.User.logOut();
+
+            // check if really logged out
+            if (Parse.User.current())
+                console.log("Failed to log out!");
+        }
+
+        // do redirect
+        //window.location.replace("Sign_In.html");
+        // or
+        window.location.href = "index.html";
+    });
+});
+</script>
+
+
+</head>
+<body>
+  <form class="form-logout" role="form">
+   
+   <input type="submit" value="Logout" id="logout"  style="visibility:hidden;" class="btn btn-primary">
+   <a href="viewper.html" target="_blank" style="visibility:hidden;" class="btn btn-primary" >aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</a>
+   <a href="#" onclick="document.getElementById('logout').click()" class="btn btn-primary">logout</a>
+  </form>
+  <div class="container">
+  User Id  :
+  <input type="text" id="pr">
+  </div>
+  <a href="#" onclick="full()" class="btn btn-primary">Detail</a>
+  <br/>
+  
+  <div class="table-responsive">
+        <table class="table table-bordered" id="myTable">
+            <thead>
+                <tr>
+                    <th>Owner</th>
+                    <th>Provider Id</th>
+                 
+                    <th>Record Id</th>
+                    
+                    <th>Hash</th>
+                    <th>Key</th>
+                    
+                </tr>
+            </thead>
+            
+        </table>
+    </div>
+    
+    <div class="container">
+    <form target="_blank"  method="POST" action="http://127.0.0.1/shell1.php"> 
+    IPFS hash:
+    <input type="text" id="ipfs" name="ipfs"/>
+    
+    <a href="#" class="btn btn-primary" onclick="document.getElementById('get').click()">IPFS</a>
+    <br/>
+    <br/>
+    
+    <input type="submit" id="get" style="visibility:hidden;">
+    </form>
+
+<!--<a href="fileenc/index.html" class="btn btn-primary" >Record</a>-->
+<a href="addper.html" target="_blank" class="btn btn-primary" >AddPer</a>
+<a href="removeper.html" target="_blank" class="btn btn-primary" >RemovePer</a>
+<a href="viewper.html" target="_blank" class="btn btn-primary" >ViewPer</a>
+<a href="decrypt.html"  target="_blank" class="btn btn-primary">Decrypt</a>
+
+</div>
+
+
+<script src="/home/rahoof/remix/node_modules/crypto-js/crypto-js.js"></script>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="index.js"></script>
+<script>
+
+
+//$("#button1").click(function() {
+ // window.alert($("#age").val());
+// Courses.setInstructor($("#age").val());
+//});
+function addRow() {
+  var table = document.getElementById("myTable");
+  var row = table.insertRow(1);
+  var cell1 = row.insertCell(0);
+  var cell2 = row.insertCell(1);
+  var cell3 = row.insertCell(2);
+  cell1.innerHTML = "cell1";
+  cell2.innerHTML = "cell2";
+  cell3.innerHTML = "cell3";
+}
+let str;
+function full()
+{
+  var table1 = document.getElementById("myTable");
+  for(var i=table1.rows.length-1;i>0;i--)
+  {
+     table1.deleteRow(i);
+  }
+  Name =$("#pr").val();
+  alert(Name);
+  if(Name!=''){
+  Courses.get.call(Name,function(error, result){
+     console.log(result);
+     
+     if(!error){
+     window.alert(result);
+      str=result;
+ 
+      /*var table = document.getElementById("myTable");
+      var row = table.insertRow(1);
+      
+      var cell1 = row.insertCell(0);
+      var cell2 = row.insertCell(1);
+      var cell3 = row.insertCell(2);
+      
+      cell1.innerHTML = str;
+      cell2.innerHTML = str;
+      cell3.innerHTML = str;
+      console.log(result);
+      */}
+      else
+      console.error(error);
+     });
+  for(i=1;i<=parseInt(str);i++)    
+     {
+      Courses.detail.call(i,Name,function(error, result){
+      console.log(result);
+       
+     
+     if(!error){
+     //window.alert(result.toString());
+      var table = document.getElementById("myTable");
+       
+      var row = table.insertRow(1);
+      
+      var cell1 = row.insertCell(0);
+      var cell2 = row.insertCell(1);
+      var cell3 = row.insertCell(2);
+      var cell4 = row.insertCell(3);
+      var cell5 = row.insertCell(4);
+      
+      cell1.innerHTML = result[0];
+      cell2.innerHTML = result[1];
+      cell3.innerHTML = result[2];
+      cell4.innerHTML = result[3];
+      cell5.innerHTML = result[4];
+      
+      console.log(result);
+      }
+      else
+      console.error(error);
+     });
+     }
+
+    }
+  }
+ 
+    
+
+
+</script>
+</body>
+</html>

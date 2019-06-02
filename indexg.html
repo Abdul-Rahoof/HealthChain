@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <meta http-equiv="X-UA-Compatible" content="ie=edge">
+ <title>Document</title>
+<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" type="text/css" href="index.css">
+<script src="./node_modules/web3/dist/web3.min.js"></script>
+<script src="indexg.js"></script>
+<script>
+history.pushState(null, null, location.href);
+    window.onpopstate = function () {
+        history.go(1);
+    };
+</script>
+</head>
+<body>
+ <div class="container">
+ <br>
+    <h2 id=”instructor”></h2>
+    <form name="login" action="secondg.html" id="login" method="POST"> 
+    <table><tr><td>
+    Name       :</td><td width="500px">
+    <input type="text" id="name"/></td></tr><tr><td>
+    Provider id:</td><td width="500px">
+    <input type="text" id="user"/></td></tr><tr><td>
+    Public key:</td><td width="500px">
+    <input type="text" id="key"/></td></tr></table>
+    <a href="#" onclick="document.getElementById('reg').click()" class="btn btn-primary">Register</a>
+    <a href="#" onclick="document.getElementById('log').click()" class="btn btn-primary">Go to Dashboard</a>
+    
+    <input type="button" id="reg" value="Register" style="visibility:hidden;" onclick="registerCandidate()"/>
+    <input type="submit" id="log" value="Login" style="visibility:hidden;">
+    </form>
+     
+
+</div>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="/home/rahoof/remix/node_modules/crypto-js/crypto-js.js"></script>
+
+<script>
+//window.alert(CryptoJS.AES.encrypt('my message', 'secret key 123'));
+
+
+
+
+function registerCandidate(){
+  //window.alert($("#name").val());
+      
+       //window.alert("Patient");
+              
+         
+        
+   
+   
+
+         candidateName = $("#name").val();
+         userName =$("#user").val();
+         pub=$("#key").val();
+         // window.alert('0x'+userName);
+         window.alert(userName);
+         Courses.reg(candidateName,userName,pub,{gas: 1000000});
+         window.alert("Registered");
+         document.getElementById("name").value='';
+         document.getElementById("user").value='';
+    
+}
+
+  
+   
+</script>
+</body>
+</html>

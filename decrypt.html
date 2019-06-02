@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ 
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <meta http-equiv="X-UA-Compatible" content="ie=edge">
+ <title>Document</title>
+<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" type="text/css" href="index.css">
+<script src="jsencrypt.min.js"></script>
+<script src="/home/rahoof/remix/node_modules/crypto-js/crypto-js.js"></script>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+
+<script src="./node_modules/web3/dist/web3.min.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+<script src="parse.min.js"></script>
+<script>
+jQuery(document).ready(function() {
+
+    Parse.$ = jQuery;
+    Parse.initialize("...", "...");
+
+    $('.form-logout').on('submit', function (e) {
+        // Prevent Default Submit Event
+        e.preventDefault();
+
+        console.log("Performing submit");
+
+        //logout current user
+        if ( Parse.User.current() ) {
+            Parse.User.logOut();
+
+            // check if really logged out
+            if (Parse.User.current())
+                console.log("Failed to log out!");
+        }
+
+        // do redirect
+        //window.location.replace("Sign_In.html");
+        // or
+        window.location.href = "index.html";
+    });
+});
+</script>
+
+</head>
+<body>
+   <form class="form-logout" role="form">
+   
+   <input type="submit" value="Logout" id="logout"  style="visibility:hidden;" class="btn btn-primary">
+   <a href="viewper.html" target="_blank" style="visibility:hidden;" class="btn btn-primary" >aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</a>
+   <a href="#" onclick="document.getElementById('logout').click()" class="btn btn-primary">logout</a>
+  </form>
+  
+    
+    <div class="container">
+    <table><tr><td>
+    User ID   :</td><td width="500px">
+     <input type="text" id="usr"/></td></tr><tr><td>
+    
+    Record ID   :</td><td width="500px">
+     <input type="text" id="rid"/></td></tr><tr><td>
+      
+    Private Key   :</td><td width="500px">
+     <input type="text" id="keys"/></td></tr></table>
+     <form target="_blank" name="hi" method="GET" action="http://127.0.0.1:5000/">
+    <input type="submit" value="AddKey" id="key" style="visibility:hidden;">
+    </form>
+     <label for="decrypt" class="btn btn-primary"  >Browse</label>
+     <a href="#" onclick="dec()" class="btn btn-primary">Decrypt</a>
+    <input type="file" id="decrypt" style="visibility:hidden;" onchange='decrypt(event)'>
+    <textarea cols="100" rows="50" id="hi"></textarea>
+
+<!--<a href="fileenc/index.html" class="btn btn-primary" >Record</a>-->
+<a class="btn btn-primary" id="a" style="visibility:hidden;">Record</a>
+
+</div>
+
+<script type="text/javascript">
+  function download(text, name, type) {
+  var a = document.getElementById("a");
+  var file = new Blob([text], {type: type});
+  a.href = URL.createObjectURL(file);
+  a.download = name;
+  
+  
+}
+var con;
+var keyval;
+
+function decrypt(evt){
+    var f = evt.target.files[0];   
+    if (f) {
+      var str;
+      var r = new FileReader();
+      r.onload = function(e) { 
+          var contents = e.target.result;             
+          var ct = r.result;
+          var words = ct.split(' ');            
+          alert(ct.length);
+          alert(ct);
+          con='';
+         //alert(words);
+          for(let j=1;j<ct.length;j++)
+           {
+             con=con+ct[j];
+           }
+          alert(con);
+
+          usr=$("#usr").val();
+          rid=$("#rid").val();
+          priv=$("#keys").val();
+          Courses.getkey.call(usr,rid,function(error, result){
+         console.log(result);
+         
+         if(!error){
+           window.alert(result);
+           //str=result;
+            var decrypt = new JSEncrypt();
+          decrypt.setPrivateKey(priv);
+          var uncrypted = decrypt.decrypt(result);
+          alert(uncrypted);
+          keyval=uncrypted; 
+          
+ 
+            }
+         else
+         console.error(error);
+          });
+          
+           
+       //   var bytes  = CryptoJS.AES.decrypt(con, 'I1zgD8eGA6HMpRo1fGlU');
+       //   var plaintext = bytes.toString(CryptoJS.enc.Utf8);
+       //   alert(plaintext);
+          
+       //   download(plaintext, "download", 'text/plain');
+         // document.getElementById('key').click();
+          
+                  
+           
+     }
+      r.readAsText(f);
+   
+    } else { 
+      alert("Failed to load file");
+    }
+
+}
+function randomString(){
+var chars='0123456789QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm'.split('');
+var str='';
+for(var i=0;i<20;i++)
+{
+  str+=chars[Math.floor(Math.random() * chars.length)];
+}
+return str;
+}/*
+function readSingleFile(evt) {
+    var f = evt.target.files[0];   
+    if (f) {
+      var r = new FileReader();
+      r.onload = function(e) { 
+          var contents = e.target.result;             
+          var ct = r.result;
+          var words = ct.split(' ');            
+          //alert(ct);
+          string=randomString();
+          alert("key:"+string);
+          ciphertext=CryptoJS.AES.encrypt(ct, "I1zgD8eGA6HMpRo1fGlU");
+          alert(ciphertext.toString());
+          //alert(f.name);
+          //var bytes  = CryptoJS.AES.decrypt(ct, 'I1zgD8eGA6HMpRo1fGlU');
+          //var plaintext = bytes.toString(CryptoJS.enc.Utf8);
+          //alert(plaintext);
+          document.getElementById("hashs").value=CryptoJS.SHA256(ct);
+          document.getElementById("recordn").value=f.name;
+          document.getElementById("recordp").value=randomString(); 
+          //alert(CryptoJS.SHA256(ct));
+          download(ciphertext.toString(), f.name, 'text/plain');
+          document.getElementById('key').click();
+          
+                  
+           
+     }
+      r.readAsText(f);
+   
+    } else { 
+      alert("Failed to load file");
+    }
+  }
+*/
+function dec(){
+          //I1zgD8eGA6HMpRo1fGlU
+          alert(keyval);
+          //var ky=document.getElementById('keys');
+          var bytes  = CryptoJS.AES.decrypt(con, keyval);
+          var plaintext = bytes.toString(CryptoJS.enc.Utf8);
+          alert(plaintext);
+          document.getElementById('hi').innerHTML=plaintext;
+          download(plaintext, "download", 'text/html');
+          document.getElementById('a').click();
+          document.getElementById("usr").value='';
+          document.getElementById("rid").value='';
+          document.getElementById("keys").value='';
+}
+//  document.getElementById('fileinput').addEventListener('change', readSingleFile, false);
+</script>
+<script src="index.js"></script>
+
+
+</body>
+</html>

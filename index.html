@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <meta http-equiv="X-UA-Compatible" content="ie=edge">
+ <title>Document</title>
+<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" type="text/css" href="index.css">
+<script src="./node_modules/web3/dist/web3.min.js"></script>
+<script src="index.js"></script>
+<script>
+history.pushState(null, null, location.href);
+    window.onpopstate = function () {
+        history.go(1);
+    };
+</script>
+
+</head>
+<body>
+ <div class="container">
+ <br>
+    <h2 id=”instructor”></h2>
+    <form name="login" id="login" method="POST"> 
+    <table>
+    <tr><td>
+    Name       :</td><td width="500px">
+    <input type="text" id="name"/></td></tr><tr><td>
+    Provider id:</td><td width="500px">
+    <input type="hidden" id="user"/></td></tr></table>
+    <input type="radio" id="patient" name="user" value="patient" onClick="pat()" required="required">Patient<br>
+    <input type="radio" id="provider" name="user" value="provider" onClick="pro()" required="required">Provider<br>
+    <input type="radio" id="miner" value="miner" name="user" onClick="mine()" required="required">Miner<br>
+    <a href="#" onclick="document.getElementById('reg').click()" class="btn btn-primary">Register</a>
+    
+    <a href="#" onclick="document.getElementById('key').click()" class="btn btn-primary">GenKey</a>
+    <a href="#" onclick="document.getElementById('log').click()" class="btn btn-primary">Go to Dashboard</a>
+    <input type="button" id="reg" value="Register" style="visibility:hidden;" onclick="registerCandidate()"/>
+    <input type="submit" id="log" value="Login" style="visibility:hidden;">
+    </form>
+     <!--http://127.0.0.1:5000-->
+     <form name="hi" method="GET" action="rsaenc.html">
+     <input type="submit" id="key" value="GenKey" style="visibility:hidden;">
+     </form> 
+     
+
+</div>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="/home/rahoof/remix/node_modules/crypto-js/crypto-js.js"></script>
+
+
+<script>
+
+
+
+//$("#button1").click(function() {
+ // window.alert($("#age").val());
+// Courses.setInstructor($("#age").val());
+//});
+
+function randomString(){
+var chars='0123456789QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm'.split('');
+var str='';
+for(var i=0;i<10;i++)
+{
+  str+=chars[Math.floor(Math.random() * chars.length)];
+}
+return str;
+}
+function pat(){
+   if(document.getElementById("patient").checked){
+          var x=document.getElementById("user");
+          x.setAttribute("type","hidden");
+          $("#login").change(function(){ $("#login").attr("action","patient.html");});
+         // document.getElementById("login").submit();
+    }
+}
+function mine(){
+   if(document.getElementById("miner").checked){
+          var x=document.getElementById("user");
+          x.setAttribute("type","text");
+          $("#login").change(function(){ $("#login").attr("action","miner.html");});
+         // document.getElementById("login").submit();
+    }
+}
+function pro(){
+  //randomString();
+  if(document.getElementById("provider").checked){
+          //window.alert("Patient");
+          var x=document.getElementById("user");
+          x.setAttribute("type","text");
+          $("#login").change(function(){ $("#login").attr("action","second.html");});
+      }
+  else{
+     var x=document.getElementById("user");
+          x.setAttribute("type","hidden");
+  }
+}
+function registerCandidate(){
+   //window.alert($("#name").val());
+   
+   
+   if(document.getElementById("patient").checked){
+         //window.alert("Patient");              
+         candidateName = $("#name").val();
+         userName =randomString();
+         // window.alert('0x'+userName);
+         window.alert(userName);
+         Courses.reg(candidateName,userName,userName,0,{gas: 1000000});
+         window.alert(userName);
+   }
+   else if(document.getElementById("provider").checked){
+         candidateName = $("#name").val();
+         userName =$("#user").val();
+         // window.alert('0x'+userName);
+         window.alert(userName);
+         Courses.reg(candidateName,userName,userName,1,{gas: 1000000});
+         window.alert(userName);
+      }
+   else if(document.getElementById("miner").checked){
+         candidateName = $("#name").val();
+         userName =$("#user").val();
+         // window.alert('0x'+userName);
+         window.alert(userName);
+         Courses.regminer(candidateName,userName,userName,{gas: 1000000});
+         window.alert(userName);
+        
+   }
+  else{
+     window.alert("Choose user category");
+   }
+
+   document.getElementById("name").value='';
+    
+   document.getElementById("user").value='';
+   
+}
+
+function loginCandidate(){
+      Name =$("#namep").val();
+      window.alert(Name)
+      User = $("#userp").val();
+      Record=$("#recordp").val();
+      Hash=$("#hashs").val();
+      
+      window.alert(Courses.login(Record,Hash,Name,{gas: 1000000}).toString());
+      if(document.getElementById("patient").checked){
+      window.alert("Patient"); 
+       
+      }
+    }
+ //  console.log(web3.eth.getTransaction("0x0a5480fa82235182e93db5977abc7e9b8782b006a84068523d256f74ac14083b"));
+</script>
+</body>
+</html>

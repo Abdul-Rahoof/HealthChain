@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <meta http-equiv="X-UA-Compatible" content="ie=edge">
+ <title>Document</title>
+<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" type="text/css" href="index.css">
+<script src="./node_modules/web3/dist/web3.min.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+<script src="parse.min.js"></script>
+<script>
+jQuery(document).ready(function() {
+
+    Parse.$ = jQuery;
+    Parse.initialize("...", "...");
+
+    $('.form-logout').on('submit', function (e) {
+        // Prevent Default Submit Event
+        e.preventDefault();
+
+        console.log("Performing submit");
+
+        //logout current user
+        if ( Parse.User.current() ) {
+            Parse.User.logOut();
+
+            // check if really logged out
+            if (Parse.User.current())
+                console.log("Failed to log out!");
+        }
+
+        // do redirect
+        //window.location.replace("Sign_In.html");
+        // or
+        window.location.href = "index.html";
+    });
+});
+</script>
+
+
+</head>
+<body>
+
+  <form class="form-logout" role="form">
+   
+   <input type="submit" value="Logout" id="logout"  style="visibility:hidden;" class="btn btn-primary">
+   <a href="viewper.html" target="_blank" style="visibility:hidden;" class="btn btn-primary" >aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</a>
+   <a href="#" onclick="document.getElementById('logout').click()" class="btn btn-primary">logout</a>
+  </form>
+  <div class="container">
+  User Id  :
+  <input type="text" id="pr">
+  </div>
+  <input type="radio" id="provider" name="user" value="provider"  required="required">Provider<br>
+  <input type="radio" id="miner" value="miner" name="user" required="required">Miner<br>
+  <a href="#" onclick="full11()" class="btn btn-primary">Detail</a>
+  <br/>
+  
+  <div class="table-responsive">
+        <table class="table table-bordered" id="myTable">
+            <thead>
+                <tr>
+                    <th>Provider Name</th>
+                    <th>Provider Id</th>
+                    <th>Vote</th>
+                    
+                    
+                </tr>
+            </thead>
+            
+        </table>
+    </div>
+    
+    <div class="container">
+    <table>
+    <tr><td>
+    Miner Id       :</td><td width="500px">
+    <input type="text" id="name"/></td></tr><tr><td>
+    Provider id:</td><td width="500px">
+    <input type="text" id="user"/></td></tr></table>
+<a href="#" onclick="document.getElementById('reg').click()" class="btn btn-primary">Add vote</a>
+ <input type="button" id="reg" value="Register" style="visibility:hidden;" onclick="registerCandidate()"/>
+<!--<a href="fileenc/index.html" class="btn btn-primary" >Record</a>-->
+
+
+</div>
+
+
+<script src="/home/rahoof/remix/node_modules/crypto-js/crypto-js.js"></script>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="index.js"></script>
+<script>
+
+
+//$("#button1").click(function() {
+ // window.alert($("#age").val());
+// Courses.setInstructor($("#age").val());
+//});
+function addRow() {
+  var table = document.getElementById("myTable");
+  var row = table.insertRow(1);
+  var cell1 = row.insertCell(0);
+  var cell2 = row.insertCell(1);
+  var cell3 = row.insertCell(2);
+  cell1.innerHTML = "cell1";
+  cell2.innerHTML = "cell2";
+  cell3.innerHTML = "cell3";
+}
+let str;
+
+function full11(){
+if(document.getElementById("provider").checked){
+   full();
+}
+else
+{
+  full1();
+}
+
+
+}
+function full()
+{
+   
+  var table1 = document.getElementById("myTable");
+  for(var i=table1.rows.length-1;i>0;i--)
+  {
+     table1.deleteRow(i);
+  }
+  Name =$("#pr").val();
+  Courses.getv.call(function(error, result){
+     console.log(result);
+     
+     if(!error){
+     //window.alert(result);
+      str=result;
+ 
+      /*var table = document.getElementById("myTable");
+      var row = table.insertRow(1);
+      
+      var cell1 = row.insertCell(0);
+      var cell2 = row.insertCell(1);
+      var cell3 = row.insertCell(2);
+      
+      cell1.innerHTML = str;
+      cell2.innerHTML = str;
+      cell3.innerHTML = str;
+      console.log(result);
+      */}
+      else
+      console.error(error);
+     });
+  for(i=0;i<parseInt(str);i++)    
+     {
+      Courses.getvote.call(Name,i,function(error, result){
+      console.log(result);
+      // window.alert(result[2]);
+     
+     if(!error){
+     //window.alert(result.toString());
+      var table = document.getElementById("myTable");
+       
+      var row = table.insertRow(1);
+      
+      var cell1 = row.insertCell(0);
+      var cell2 = row.insertCell(1);
+      var cell3 = row.insertCell(2);
+      
+      cell1.innerHTML = result[0];
+      cell2.innerHTML = result[1];
+      cell3.innerHTML = result[2];
+      
+      console.log(result);
+      }
+      else
+      console.error(error);
+     });
+     }
+
+    
+  }
+   function full1()
+  {
+   
+  var table1 = document.getElementById("myTable");
+  for(var i=table1.rows.length-1;i>0;i--)
+  {
+     table1.deleteRow(i);
+  }
+  Name =$("#pr").val();
+  Courses.getvm.call(function(error, result){
+     console.log(result);
+     
+     if(!error){
+     //window.alert(result);
+      str=result;
+ 
+      /*var table = document.getElementById("myTable");
+      var row = table.insertRow(1);
+      
+      var cell1 = row.insertCell(0);
+      var cell2 = row.insertCell(1);
+      var cell3 = row.insertCell(2);
+      
+      cell1.innerHTML = str;
+      cell2.innerHTML = str;
+      cell3.innerHTML = str;
+      console.log(result);
+      */}
+      else
+      console.error(error);
+     });
+  for(i=3;i<parseInt(str);i++)    
+     {
+      Courses.getvotem.call(Name,i,function(error, result){
+      console.log(result);
+      // window.alert(result[2]);
+     
+     if(!error){
+     //window.alert(result.toString());
+      var table = document.getElementById("myTable");
+       
+      var row = table.insertRow(1);
+      
+      var cell1 = row.insertCell(0);
+      var cell2 = row.insertCell(1);
+      var cell3 = row.insertCell(2);
+      
+      cell1.innerHTML = result[0];
+      cell2.innerHTML = result[1];
+      cell3.innerHTML = result[2];
+      
+      console.log(result);
+      }
+      else
+      console.error(error);
+     });
+     }
+
+    
+  }
+   function registerCandidate(){
+    candidateName = $("#name").val();
+         userName =$("#user").val();
+         // window.alert('0x'+userName);
+         //window.alert(userName);
+        /* Courses.addvote.call(candidateName,userName,function(error, result){
+     console.log(result);
+     
+     if(!error){
+     window.alert("Total Vote"+result);
+      str=result;
+ 
+      }
+      else
+      console.error(error);
+     });*/
+         if(document.getElementById("provider").checked){
+        
+         Courses.addvote(candidateName,userName,{gas: 1000000});
+         window.alert("added vote");
+
+         full();
+          $("#name").val()='';
+          document.getElementById("name").value='';
+          document.getElementById("user").value='';
+         }
+         else
+          {
+             Courses.addvotem(candidateName,userName,{gas: 1000000});
+         window.alert("added vote");
+
+         full1();
+          document.getElementById("name").value='';
+          document.getElementById("user").value='';
+         }
+           
+   }
+   
+</script>
+</body>
+</html>

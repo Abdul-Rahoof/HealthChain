@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ 
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <meta http-equiv="X-UA-Compatible" content="ie=edge">
+ <title>Document</title>
+  <script src="jsencrypt.min.js"></script>
+<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" type="text/css" href="index.css">
+<script src="./node_modules/web3/dist/web3.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+<script src="pdf.js"></script>
+<script src="pdf.worker.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+<script src="parse.min.js"></script>
+<script>
+jQuery(document).ready(function() {
+
+    Parse.$ = jQuery;
+    Parse.initialize("...", "...");
+
+    $('.form-logout').on('submit', function (e) {
+        // Prevent Default Submit Event
+        e.preventDefault();
+
+        console.log("Performing submit");
+
+        //logout current user
+        if ( Parse.User.current() ) {
+            Parse.User.logOut();
+
+            // check if really logged out
+            if (Parse.User.current())
+                console.log("Failed to log out!");
+        }
+
+        // do redirect
+        //window.location.replace("Sign_In.html");
+        // or
+        window.location.href = "index.html";
+    });
+});
+</script>
+
+<style type="text/css">
+
+
+
+#file-to-upload {
+	display: none;
+}
+
+#pdf-main-container {
+	width: 400px;
+	margin: 20px auto;
+}
+
+#pdf-loader {
+	display: none;
+	text-align: center;
+	color: #999999;
+	font-size: 13px;
+	line-height: 100px;
+	height: 100px;
+}
+
+#pdf-contents {
+	display: none;
+}
+
+#pdf-meta {
+	overflow: hidden;
+	margin: 0 0 20px 0;
+}
+
+#pdf-buttons {
+	float: left;
+}
+
+#page-count-container {
+	float: right;
+}
+
+#pdf-current-page {
+	display: inline;
+}
+
+#pdf-total-pages {
+	display: inline;
+}
+
+#pdf-canvas {
+	border: 1px solid rgba(0,0,0,0.2);
+	box-sizing: border-box;
+}
+
+#page-loader {
+	height: 100px;
+	line-height: 100px;
+	text-align: center;
+	display: none;
+	color: #999999;
+	font-size: 13px;
+}
+
+</style>
+</head>
+<body>
+  <form class="form-logout" role="form">
+   
+   <input type="submit" value="Logout" id="logout"  style="visibility:hidden;" class="btn btn-primary">
+   <a href="viewper.html" target="_blank" style="visibility:hidden;" class="btn btn-primary" >aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</a>
+   <a href="#" onclick="document.getElementById('logout').click()" class="btn btn-primary">logout</a>
+  </form>
+  <a href="#" onclick="full()" class="btn btn-primary">Detail</a>
+  
+  <div class="table-responsive">
+        <table class="table table-bordered" id="myTable">
+            <thead>
+                <tr>
+                    <th>Owner</th>
+                    <th>Provider</th>
+                 
+                    <th>Record Id</th>
+                    
+                    <th>Hash</th>
+                    <th>Key</th>
+                    
+                </tr>
+            </thead>
+            
+        </table>
+    </div>
+    
+    <div class="container">
+    <table><tr><td>
+    Provider   :</td><td>
+    <input type="text" id="pr"/></td></tr><tr><td>
+    
+    Patient:</td><td>
+    <input type="text" id="pt"/></td></tr>
+    <td></td><td>
+    
+    <label for="fileinut" class="btn btn-primary"  onclick="document.getElementById('fileinput').click()">Browse</label>
+ <!-- <label class="btn btn-primary" id="upload-button"  >Select PDF</label>  
+  <div id="pdf-main-container">
+ 
+<input type="file" id="file-to-upload" accept="application/pdf" />
+
+
+	<div id="pdf-loader">Loading document ...</div>
+	<div id="pdf-contents">
+		<div id="pdf-meta">
+			<div id="pdf-buttons">
+				<button class="btn btn-primary"  id="pdf-prev">Previous</button>
+				<button class="btn btn-primary"  id="pdf-next">Next</button>
+			</div>
+			<div id="page-count-container">Page <div id="pdf-current-page" ></div> of <div id="pdf-total-pages" ></div></div>
+		</div>
+		<canvas id="pdf-canvas" width="400"></canvas>
+		<div id="page-loader">Loading page ...</div>
+	</div>
+</div>--></td></tr><tr><td>Record Id:</td><td>
+    <input type="file" id="fileinput" style="visibility:hidden;">
+    <form target="_blank"  method="post" action="http://127.0.0.1/shell.php">
+    
+    
+    <input type="text" name="recordp" id="recordp">
+    
+    <input type="submit" id="fname" style="visibility:hidden;">
+    </form>
+    </td></tr><tr><td>
+    Record Name:</td><td>
+    <input type="text" id="recordn"/></td></tr><tr><td>
+    Hash:</td><td>
+    <input type="text" id="hashs"/></td></tr><tr>
+    
+    <form target="_blank" name="hi" method="GET" action="http://127.0.0.1:5000/">
+    <input type="submit" value="AddKey" id="key" style="visibility:hidden;">
+    </form><td>
+    Key:</td><td>
+    <input type="text" id="keys"/></td></tr><tr><td>
+    Patient key:</td><td>
+    <input type="text" id="cap"/></td></tr><tr><td>IPFS hash:</td><td>
+    <br/><br/><br/>
+    <form target="_blank"  method="POST" action="http://127.0.0.1/shell1.php"> 
+  
+    <input type="text" id="ipfs" name="ipfs"/>
+    
+    <a href="#" class="btn btn-primary" onclick="document.getElementById('fname').click()">IPFS</a>
+    <a href="#" onclick="document.getElementById('get').click()" class="btn btn-primary" >GetRecord</a>
+    
+    <input type="submit" id="get" style="visibility:hidden;">
+    </form></td></tr></table>
+<script src="/home/rahoof/remix/node_modules/crypto-js/crypto-js.js"></script>     
+<a href="#" onclick="loginCandidate()" class="btn btn-primary">AddNew</a>
+
+<a href="secondg.html" target="_blank" class="btn btn-primary" >AddPer</a>
+<a href="viewper.html" target="_blank" class="btn btn-primary" >ViewPer</a>
+
+<a href="decrypt.html"  target="_blank" class="btn btn-primary">Decrypt</a>
+<!--<a href="fileenc/index.html" class="btn btn-primary" >Record</a>-->
+<a class="btn btn-primary" id="a" >Record</a>
+
+
+</div>
+
+<!--
+<script>
+
+var __PDF_DOC,
+	__CURRENT_PAGE,
+	__TOTAL_PAGES,
+	__PAGE_RENDERING_IN_PROGRESS = 0,
+	__CANVAS = $('#pdf-canvas').get(0),
+	__CANVAS_CTX = __CANVAS.getContext('2d');
+
+function showPDF(pdf_url) {
+	$("#pdf-loader").show();
+
+	PDFJS.getDocument({ url: pdf_url }).then(function(pdf_doc) {
+		__PDF_DOC = pdf_doc;
+		__TOTAL_PAGES = __PDF_DOC.numPages;
+		
+		// Hide the pdf loader and show pdf container in HTML
+		$("#pdf-loader").hide();
+		$("#pdf-contents").show();
+		$("#pdf-total-pages").text(__TOTAL_PAGES);
+
+		// Show the first page
+		showPage(1);
+	}).catch(function(error) {
+		// If error re-show the upload button
+		$("#pdf-loader").hide();
+		$("#upload-button").show();
+		
+		alert(error.message);
+	});;
+}
+
+function showPage(page_no) {
+	__PAGE_RENDERING_IN_PROGRESS = 1;
+	__CURRENT_PAGE = page_no;
+
+	// Disable Prev & Next buttons while page is being loaded
+	$("#pdf-next, #pdf-prev").attr('disabled', 'disabled');
+
+	// While page is being rendered hide the canvas and show a loading message
+	$("#pdf-canvas").hide();
+	$("#page-loader").show();
+
+	// Update current page in HTML
+	$("#pdf-current-page").text(page_no);
+	
+	// Fetch the page
+	__PDF_DOC.getPage(page_no).then(function(page) {
+		// As the canvas is of a fixed width we need to set the scale of the viewport accordingly
+		var scale_required = __CANVAS.width / page.getViewport(1).width;
+
+		// Get viewport of the page at required scale
+		var viewport = page.getViewport(scale_required);
+
+		// Set canvas height
+		__CANVAS.height = viewport.height;
+
+		var renderContext = {
+			canvasContext: __CANVAS_CTX,
+			viewport: viewport
+		};
+		
+		// Render the page contents in the canvas
+		page.render(renderContext).then(function() {
+			__PAGE_RENDERING_IN_PROGRESS = 0;
+
+			// Re-enable Prev & Next buttons
+			$("#pdf-next, #pdf-prev").removeAttr('disabled');
+
+			// Show the canvas and hide the page loader
+			$("#pdf-canvas").show();
+			$("#page-loader").hide();
+		});
+	});
+}
+
+// Upon click this should should trigger click on the #file-to-upload file input element
+// This is better than showing the not-good-looking file input element
+$("#upload-button").on('click', function() {
+	$("#file-to-upload").trigger('click');
+});
+
+// When user chooses a PDF file
+$("#file-to-upload").on('change', function() {
+	// Validate whether PDF
+    if(['application/pdf'].indexOf($("#file-to-upload").get(0).files[0].type) == -1) {
+        alert('Error : Not a PDF');
+        return;
+    }
+
+	$("#upload-button").hide();
+
+	// Send the object url of the pdf
+	showPDF(URL.createObjectURL($("#file-to-upload").get(0).files[0]));
+});
+
+// Previous page of the PDF
+$("#pdf-prev").on('click', function() {
+	if(__CURRENT_PAGE != 1)
+		showPage(--__CURRENT_PAGE);
+});
+
+// Next page of the PDF
+$("#pdf-next").on('click', function() {
+	if(__CURRENT_PAGE != __TOTAL_PAGES)
+		showPage(++__CURRENT_PAGE);
+});
+
+</script>-->
+<script type="text/javascript">
+  function download(text, name, type) {
+  var a = document.getElementById("a");
+  var file = new Blob([text], {type: type});
+  a.href = URL.createObjectURL(file);
+  a.download = name;
+  
+  
+}
+
+function decrypt(evt){
+    var f = evt.target.files[0];   
+    if (f) {
+      var r = new FileReader();
+      r.onload = function(e) { 
+          var contents = e.target.result;             
+          var ct = r.result;
+          var words = ct.split(' ');            
+          alert(ct.length);
+          alert(ct);
+          var con='';
+         //alert(words);
+          for(let j=2;j<ct.length;j++)
+           {
+             con=con+ct[j];
+           }
+          alert(con);
+          //string=randomString();
+          //alert("key:"+string);
+          //ciphertext=CryptoJS.AES.encrypt(ct, "I1zgD8eGA6HMpRo1fGlU");
+          //alert(ciphertext.toString());
+          //alert(f.name);
+          var bytes  = CryptoJS.AES.decrypt(con, 'I1zgD8eGA6HMpRo1fGlU');
+          var plaintext = bytes.toString(CryptoJS.enc.Utf8);
+          alert(plaintext);
+          //document.getElementById("hashs").value=CryptoJS.SHA256(ct);
+          //document.getElementById("recordn").value=f.name;
+         // document.getElementById("recordp").value=randomString(); 
+          //alert(CryptoJS.SHA256(ct));
+          download(plaintext, $("#recordp").val(), 'text/plain');
+          //document.getElementById('key').click();
+          
+                  
+           
+     }
+      r.readAsText(f);
+   
+    } else { 
+      alert("Failed to load file");
+    }
+
+}
+function randomString(){
+var chars='0123456789QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm'.split('');
+var str='';
+for(var i=0;i<20;i++)
+{
+  str+=chars[Math.floor(Math.random() * chars.length)];
+}
+return str;
+}
+function readSingleFile(evt) {
+    var f = evt.target.files[0];   
+    if (f) {
+      var r = new FileReader();
+      r.onload = function(e) { 
+          var contents = e.target.result;             
+          var ct = r.result;
+          var words = ct.split(' ');            
+          //alert(ct);
+            //download(ct, "download", 'text/html');
+          string=randomString();
+          alert("key:"+string);
+          ciphertext=CryptoJS.AES.encrypt(ct, string);
+          alert(ciphertext.toString());
+          //alert(f.name);
+          //var bytes  = CryptoJS.AES.decrypt(ct, 'I1zgD8eGA6HMpRo1fGlU');
+          //var plaintext = bytes.toString(CryptoJS.enc.Utf8);
+          //alert(plaintext);
+          document.getElementById("hashs").value=CryptoJS.SHA256(ct);
+          document.getElementById("recordn").value=f.name;
+          document.getElementById("recordp").value=randomString(); 
+          //alert(CryptoJS.SHA256(ct));
+          var str='';
+          Name =$("#pr").val();
+         Courses.getpub.call(Name,function(error, result){
+         console.log(result);
+         
+         if(!error){
+           window.alert(result);
+           str=result;
+           var encrypt = new JSEncrypt();
+            encrypt.setPublicKey(result);
+         // alert($('#p').val());
+          var encrypted = encrypt.encrypt(string);
+          $('#keys').val(encrypted);  
+           alert(encrypted);
+ 
+            }
+         else
+         console.error(error);
+          });
+          //str=$("#pt").val();
+          //alert(str);
+           
+         Name =$("#pt").val();
+         Courses.getpub.call(Name,function(error, result){
+         console.log(result);
+         
+         if(!error){
+           window.alert(result);
+           str=result;
+           var encrypt = new JSEncrypt();
+            encrypt.setPublicKey(result);
+         // alert($('#p').val());
+          var encrypted = encrypt.encrypt(string);
+          $('#cap').val(encrypted);  
+           alert(encrypted);
+ 
+            }
+         else
+         console.error(error);
+          });
+          var nam=$("#recordp").val();
+
+          download(ciphertext.toString(), $("#recordp").val(), 'text/html');
+          //document.getElementById('key').click();
+          
+                  
+           
+     }
+      r.readAsText(f);
+   
+    } else { 
+      alert("Failed to load file");
+    }
+  }
+
+  document.getElementById('fileinput').addEventListener('change', readSingleFile, false);
+</script>
+<script src="/home/rahoof/remix/node_modules/crypto-js/crypto-js.js"></script>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="index.js"></script>
+<script>
+
+
+
+//$("#button1").click(function() {
+ // window.alert($("#age").val());
+// Courses.setInstructor($("#age").val());
+//});
+function addRow() {
+  var table = document.getElementById("myTable");
+  var row = table.insertRow(1);
+  var cell1 = row.insertCell(0);
+  var cell2 = row.insertCell(1);
+  var cell3 = row.insertCell(2);
+  cell1.innerHTML = "cell1";
+  cell2.innerHTML = "cell2";
+  cell3.innerHTML = "cell3";
+}
+let str;
+function full()
+{
+  var table1 = document.getElementById("myTable");
+  for(var i=table1.rows.length-1;i>0;i--)
+  {
+     table1.deleteRow(i);
+  }
+  Name =$("#pr").val();
+  Courses.get.call(Name,function(error, result){
+     console.log(result);
+     
+     if(!error){
+     window.alert(result);
+      str=result;
+ 
+      /*var table = document.getElementById("myTable");
+      var row = table.insertRow(1);
+      
+      var cell1 = row.insertCell(0);
+      var cell2 = row.insertCell(1);
+      var cell3 = row.insertCell(2);
+      
+      cell1.innerHTML = str;
+      cell2.innerHTML = str;
+      cell3.innerHTML = str;
+      console.log(result);
+      */}
+      else
+      console.error(error);
+     });
+  for(i=1;i<=parseInt(str);i++)    
+     {
+      Courses.detail.call(i,Name,function(error, result){
+      console.log(result);
+       
+     
+     if(!error){
+     //window.alert(result.toString());
+      var table = document.getElementById("myTable");
+       
+      var row = table.insertRow(1);
+      
+      var cell1 = row.insertCell(0);
+      var cell2 = row.insertCell(1);
+      var cell3 = row.insertCell(2);
+      var cell4 = row.insertCell(3);
+      var cell5 = row.insertCell(4);
+     
+      cell1.innerHTML = result[0];
+      cell2.innerHTML = result[1];
+      cell3.innerHTML = result[2];
+      cell4.innerHTML = result[3];
+      cell5.innerHTML = result[4];
+      
+      console.log(result);
+      }
+      else
+      console.error(error);
+     });
+     }
+
+  }
+ 
+    
+function loginCandidate(){
+      Name =$("#pr").val();
+     // window.alert(Name);
+      User = $("#pt").val();
+      RecName=$("#recordn").val();
+      Record=$("#recordp").val();
+      Hash=$("#hashs").val();
+      Key=$("#keys").val();
+      Key1=$("#cap").val(); 
+      ipfs=$("#ipfs").val();
+     //document.getElementById('fname').click(); 
+      
+
+      Courses.login(RecName,Record,Record,Hash,Name,User,Key,Key1,ipfs,{gas: 1000000});
+      //Courses.addper(Name,Record,Name,User,Key,Cap,{gas: 1000000});
+      
+      /*
+
+      Courses.get.call(Name,function(error, result){
+      console.log(result);
+      
+      if(!error){
+      window.alert(result);
+      str=result;
+
+            
+      /*var table = document.getElementById("myTable");
+      var row = table.insertRow(1);
+      
+      var cell1 = row.insertCell(0);
+      var cell2 = row.insertCell(1);
+      var cell3 = row.insertCell(2);
+      cell1.innerHTML = str;
+      cell2.innerHTML = str;
+      cell3.innerHTML = str;
+      console.log(result);
+      /}
+      else
+      console.error(error);
+      });
+    
+      
+      Courses.detail.call(str,Name,function(error, result){
+      console.log(result);
+      // window.alert(Name); 
+     
+     if(!error){
+      //window.alert(result.toString());
+      var table = document.getElementById("myTable");
+       
+      var row = table.insertRow(1);
+      
+      var cell1 = row.insertCell(0);
+      var cell2 = row.insertCell(1);
+      var cell3 = row.insertCell(2);
+      var cell4 = row.insertCell(3);
+      var cell5 = row.insertCell(4);
+      
+      
+      cell1.innerHTML = result[0];
+      cell2.innerHTML = result[1];
+      cell3.innerHTML = result[2];
+      cell4.innerHTML = result[3];      
+      cell5.innerHTML = result[4];
+      
+      console.log(result);
+      }
+      else
+         console.error(error);
+     });
+     
+     */
+     full();
+     //document.getElementById("pr").value='';
+     document.getElementById("pt").value='';
+     document.getElementById("recordn").value='';
+     document.getElementById("recordp").value='';
+     document.getElementById("hashs").value='';
+     document.getElementById("keys").value='';
+     document.getElementById("cap").value='';
+     document.getElementById("ipfs").value='';
+  }
+
+</script>
+</body>
+</html>

@@ -1,0 +1,160 @@
+<!doctype html>
+<html>
+  <head>
+    <title>JavaScript RSA Encryption</title>
+    <script src="http://code.jquery.com/jquery-1.8.3.min.js"></script>
+    <script src="jsencrypt.min.js"></script>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css' rel='stylesheet' type='text/css'> 
+    <link rel="stylesheet" type="text/css" href="index.css">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="./node_modules/web3/dist/web3.min.js"></script>
+
+    <script src="index.js"></script>
+    <script type="text/javascript">
+   
+      // Call this code when the page is done loading.
+      function getkey(){
+
+          var pub=new JSEncrypt();
+          alert(pub.getKey().getPrivateKey().toString());
+          $('#privkey').val(pub.getKey().getPrivateKey());
+          $('#pubkey').val(pub.getKey().getPublicKey());
+          //encrypt();
+      }
+      function encrypt(){
+          var encrypt = new JSEncrypt();
+          encrypt.setPublicKey($('#pubkey').val());
+          alert($('#pubkey').val());
+          var encrypted = encrypt.encrypt(/*$('#input').val()*/'hi');
+          alert(encrypted);
+          var decrypt = new JSEncrypt();
+          decrypt.setPrivateKey($('#privkey').val());
+          var uncrypted = decrypt.decrypt(encrypted);
+          alert(uncrypted);
+          
+      }
+      function decrypt(){
+       
+        
+      }
+      function reencrypt(){
+         
+       
+
+      }
+      $(function() {
+
+        // Run a quick encryption/decryption when they click.
+        $('#testme').click(function() {
+
+          // Encrypt with the public key...
+          /* var encrypt = new JSEncrypt();
+          encrypt.setPublicKey($('#pubkey').val());
+          var encrypted = encrypt.encrypt($('#input').val());
+          alert(encrypted);
+          *//*var pub=new JSEncrypt();
+          $('#privkey').val(pub.getKey().getPrivateKey());
+          $('#pubkey').val(pub.getKey().getPublicKey());*/
+          // pr.innerHTML=pub.getKey().getPrivateKey();
+          //$('#pubkey').innerHTML=pub.getKey().getPublicKey();
+          // Decrypt with the private key...
+          /*var decrypt = new JSEncrypt();
+          decrypt.setPrivateKey($('#privkey').val());
+          var uncrypted = decrypt.decrypt(encrypted);
+          
+          // Now a simple check to see if the round-trip worked.
+          if (uncrypted == $('#input').val()) {
+            alert('It works!!!');
+          }
+          else {
+            alert('Something went wrong....');
+          }*/
+        });
+      });
+    </script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+<script src="parse.min.js"></script>
+<script>
+jQuery(document).ready(function() {
+
+    Parse.$ = jQuery;
+    Parse.initialize("...", "...");
+
+    $('.form-logout').on('submit', function (e) {
+        // Prevent Default Submit Event
+        e.preventDefault();
+
+        console.log("Performing submit");
+
+        //logout current user
+        if ( Parse.User.current() ) {
+            Parse.User.logOut();
+
+            // check if really logged out
+            if (Parse.User.current())
+                console.log("Failed to log out!");
+        }
+
+        // do redirect
+        //window.location.replace("Sign_In.html");
+        // or
+        window.location.href = "index.html";
+    });
+});
+</script>
+
+  </head>
+  <body>
+    <form class="form-logout" role="form">
+   
+   <input type="submit" value="Logout" id="logout"  style="visibility:hidden;" class="btn btn-primary">
+   <a href="viewper.html" target="_blank" style="visibility:hidden;" class="btn btn-primary" >aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</a>
+   <a href="#" onclick="document.getElementById('logout').click()" class="btn btn-primary">logout</a>
+  </form>
+    <div class="container">
+    <br>
+    User Id       :
+    <input type="text" id="usr"/><br><br>
+    
+    <a class="btn btn-primary" id="testme" onclick='getkey()'>KeyPair</a>
+   <!-- <a class="btn btn-primary" id="enc" onclick='encrypt()'>Enc</a>-->
+    <label for="privkey">Private Key</label><br/>
+    <textarea id="privkey" rows="15" cols="65"></textarea><br/>
+    <label for="pubkey">Public Key</label><br/>
+    <textarea id="pubkey" rows="15" cols="65"></textarea><br/>
+    <a class="btn btn-primary" id="pub" onclick='registerPubkey()'>AddKey</a>
+    <!--<label for="input">Text to encrypt:</label><br/>
+    <textarea id="input" name="input" type="text" rows=4 cols=70>This is a test!</textarea><br/>
+    <input id="testme" type="button" value="Test Me!!!" /><br/>
+  --></div>
+<script>
+
+
+//$("#button1").click(function() {
+ // window.alert($("#age").val());
+// Courses.setInstructor($("#age").val());
+//});
+
+
+function registerPubkey(){
+  
+              
+         userid = $("#usr").val();
+         pub=$("#pubkey").val();
+         Courses.addpub(userid,pub,{gas: 1000000});
+         
+         window.alert("Public Key Added to blockchain");
+         document.getElementById("usr").value='';
+         document.getElementById("pubkey").value='';
+         document.getElementById("privkey").value='';
+}
+
+
+   
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <meta http-equiv="X-UA-Compatible" content="ie=edge">
+ <title>Document</title>
+<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" type="text/css" href="index.css">
+<script src="jsencrypt.min.js"></script>
+
+<script src="./node_modules/web3/dist/web3.min.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+<script src="parse.min.js"></script>
+<script>
+jQuery(document).ready(function() {
+
+    Parse.$ = jQuery;
+    Parse.initialize("...", "...");
+
+    $('.form-logout').on('submit', function (e) {
+        // Prevent Default Submit Event
+        e.preventDefault();
+
+        console.log("Performing submit");
+
+        //logout current user
+        if ( Parse.User.current() ) {
+            Parse.User.logOut();
+
+            // check if really logged out
+            if (Parse.User.current())
+                console.log("Failed to log out!");
+        }
+
+        // do redirect
+        //window.location.replace("Sign_In.html");
+        // or
+        window.location.href = "index.html";
+    });
+});
+</script>
+
+</head>
+<body>
+  <form class="form-logout" role="form">
+   
+   <input type="submit" value="Logout" id="logout"  style="visibility:hidden;" class="btn btn-primary">
+   <a href="viewper.html" target="_blank" style="visibility:hidden;" class="btn btn-primary" >aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</a>
+   <a href="#" onclick="document.getElementById('logout').click()" class="btn btn-primary">logout</a>
+  </form>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <div class="container">
+    <table>
+
+    <tr ><td>
+    Provider   :</td><td width="500px">
+    <input type="text" id="pr"/></td></tr><tr><td>
+    
+    
+    Patient:</td><td width="500px">
+    <input type="text" id="pt"/></td></tr><tr><td>
+    
+    
+    Third Party:</td><td width="500px">
+    <input type="text" id="third"/></td></tr><tr><td>
+    
+    
+    Record Id:</td><td width="500px">
+    <input type="text" id="recordp"/></td></tr><tr><td>
+    
+    
+    Key:</td><td width="500px">
+    <input type="text" id="key"/></td></tr><tr><td>
+    
+    
+    Public Key:</td><td width="500px">
+    <input type="hidden" id="glob"/></td></tr></table>
+    
+<input type="checkbox" id="provider" value="provider" onClick="pro()">Global<br>
+<a href="#" onclick="loginCandidate()" class="btn btn-primary">Add</a>
+
+
+  
+</div>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script>
+
+//$("#button1").click(function() {
+ // window.alert($("#age").val());
+// Courses.setInstructor($("#age").val());
+//});
+ 
+var Key;    
+
+function pro(){
+  //randomString();
+  if(document.getElementById("provider").checked){
+          //window.alert("Patient");
+          var x=document.getElementById("glob");
+          x.setAttribute("type","text");
+          $("#login").change(function(){ $("#login").attr("action","second.html");});
+      }
+  else{
+     var x=document.getElementById("glob");
+          x.setAttribute("type","hidden");
+  }
+}
+function loginCandidate(){
+      Name =$("#pr").val();
+     // window.alert(Name);
+      User = $("#pt").val();
+      Third=$("#third").val();
+      Record=$("#recordp").val();
+      var str;
+
+     if(document.getElementById("provider").checked){
+      Courses.getkey.call(User,Record,function(error, result){
+         console.log(result);
+         //str=result;
+         if(!error){
+           //window.alert(result);
+           var decrypt = new JSEncrypt();
+          decrypt.setPrivateKey($('#key').val());
+          glob =$("#glob").val();
+          var uncrypted = decrypt.decrypt(result);
+          alert(uncrypted);
+          var encrypt = new JSEncrypt();
+          
+               encrypt.setPublicKey(glob);
+          //alert($('#pubkey').val());
+          var encrypted = encrypt.encrypt(uncrypted);
+          alert(encrypted);
+          Key=encrypted;
+ 
+            }
+         else
+         console.error(error);
+          }); 
+          
+       }   
+      else
+       {
+         Courses.getrenc.call(User,Third,Record,function(error, result){
+         console.log(result);
+         //str=result;
+         if(!error){
+           //window.alert(result);
+           var decrypt = new JSEncrypt();
+          decrypt.setPrivateKey($('#key').val());
+          
+          var uncrypted = decrypt.decrypt(result[0]);
+          alert(uncrypted);
+          var encrypt = new JSEncrypt();
+          
+               encrypt.setPublicKey(result[1]);
+          //alert($('#pubkey').val());
+          var encrypted = encrypt.encrypt(uncrypted);
+          alert(encrypted);
+          Key=encrypted;
+ 
+            }
+         else
+         console.error(error);
+          }); 
+
+       }
+      if(document.getElementById("provider").checked){
+      
+      
+      Courses.addperg(Third,Third,Record,Name,User,Key,{gas: 1000000});
+       
+      }
+      else
+      {
+       Courses.addper(Third,Third,Record,Name,User,Key,{gas: 1000000});
+       
+       }
+      
+      
+      window.alert("Permission added");
+      document.getElementById("pr").value='';
+      document.getElementById("pt").value='';
+      document.getElementById("third").value='';
+      document.getElementById("recordp").value='';
+      document.getElementById("key").value='';
+      document.getElementById("glob").value='';
+
+  }
+
+</script>
+<script src="index.js"></script>
+</body>
+</html>
